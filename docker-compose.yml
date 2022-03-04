@@ -1,0 +1,35 @@
+version: "3"
+   
+services:
+
+    movie-rating-app:
+        build: ./movie-rating
+        command: python manage.py runserver 0.0.0.0:8000
+        ports:
+            - "80:8000"
+        depends_on:
+            - pgdb
+            - movie-provider
+        volumes:
+            - ./movie-rating:/app
+
+    movie-provider:
+        build: ./movie-provider
+        command: python3 movie-provider-app.py 0.0.0.0 5000
+        
+    adminer:
+        image: adminer
+        depends_on:
+            - pgdb
+
+    pgdb:
+        image: postgres
+        environment:
+        - POSTGRES_DB=postgres
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        volumes:
+            - ./data/db:/var/lib/postgresql/data
+
+
+
